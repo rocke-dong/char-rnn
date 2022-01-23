@@ -1,12 +1,9 @@
-import glob
 import string
 import unicodedata
-import os
 import torch
 from torch.utils.data import Dataset, DataLoader
 from torch.utils.data import random_split
 from pathlib import Path
-import numpy as np
 from utilities.common_utils import get_logger
 import logging
 
@@ -34,17 +31,20 @@ class Vocab(object):
     """
     docstring
     """
-    def __init__(self, max_len:int) -> None:
+    def __init__(self, max_len:int, lower_case=True) -> None:
         self.max_len = max_len
         self.pad_token = '<pad>'
         self.pad_token_id = 0
         self.char2id = {self.pad_token: 0}
         self.id2char = {0: self.pad_token}
+        self.lower_case = lower_case
 
     def __len__(self):
         return len(self.char2id)
 
     def string_to_ids(self, item_name):
+        if self.lower_case:
+            item_name = item_name.lower()
         ids = []
         for char in item_name:
             if char in self.char2id:
